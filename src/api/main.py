@@ -9,7 +9,8 @@ from ..simulation.monte_carlo import simulate_defaults
 
 app = FastAPI(title="Quantum Credit Risk API")
 
-# Instantiate global model (for demonstration)
+# Instantiate a QSVM that will serve prediction requests.
+# In a production setting this model could be loaded from persistent storage.
 svm_model = QuantumSVM()
 
 class PDRequest(BaseModel):
@@ -27,7 +28,9 @@ class SimulationRequest(BaseModel):
 @app.post("/predict_pd")
 def predict_pd(req: PDRequest):
     """Predict probability of default using QSVM."""
-    # Dummy model behavior for example
+    # Forward the request through the quantum SVM model. If the model has not
+    # been trained (e.g. when Qiskit isn't installed), return a placeholder
+    # prediction so API clients still receive a valid response.
     try:
         prediction = svm_model.predict([req.features])[0]
     except Exception:
@@ -37,11 +40,16 @@ def predict_pd(req: PDRequest):
 @app.post("/optimize_portfolio")
 def optimize(req: PortfolioRequest):
     """Optimize portfolio using QAOA."""
+    # QAOA searches for an optimal binary portfolio allocation using a quantum
+    # approximate algorithm. When quantum support is unavailable the function
+    # gracefully falls back to a classical heuristic.
     selection = optimize_portfolio(req.returns, req.risks, req.budget)
     return {"selection": selection}
 
 @app.post("/simulate_default")
 def simulate(req: SimulationRequest):
     """Run Monte Carlo default simulation."""
+    # This endpoint remains classical but demonstrates integration with the
+    # rest of the API which uses quantum techniques.
     rate = simulate_defaults(req.probabilities, req.trials)
     return {"default_rate": rate}
