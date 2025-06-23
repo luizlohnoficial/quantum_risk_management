@@ -5,7 +5,7 @@ Projeto de exemplo para modelagem de risco de crédito utilizando recursos de co
 ## Estrutura
 
 ```
-risk_credit_quantum/
+.
 ├── .github/workflows/ci-cd.yml
 ├── data/
 ├── notebooks/
@@ -35,14 +35,14 @@ risk_credit_quantum/
    ```
 2. Rode a API:
    ```bash
-   uvicorn risk_credit_quantum.src.api.main:app --reload
+   uvicorn src.api.main:app --reload
    ```
 3. Acesse `http://localhost:8000/docs` para ver a documentação interativa.
 
 ### Dashboard
 
 ```bash
-streamlit run risk_credit_quantum.src.dashboards.app
+streamlit run src.dashboards.app
 ```
 
 ### Testes

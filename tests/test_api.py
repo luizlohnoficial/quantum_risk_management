@@ -1,5 +1,11 @@
 from fastapi.testclient import TestClient
-from risk_credit_quantum.src.api.main import app
+from pathlib import Path
+import sys
+
+# Ensure the src package is importable when tests run from any directory
+sys.path.append(str(Path(__file__).resolve().parents[1]))
+
+from src.api.main import app
 
 client = TestClient(app)
 
