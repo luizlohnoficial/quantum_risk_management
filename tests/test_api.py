@@ -1,5 +1,6 @@
 from fastapi.testclient import TestClient
-from risk_credit_quantum.src.api.main import app
+# Import the FastAPI app from the local src package
+from src.api.main import app
 
 client = TestClient(app)
 

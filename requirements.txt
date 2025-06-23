@@ -7,3 +7,4 @@ qiskit-machine-learning
 qiskit-optimization
 qiskit-algorithms
 pytest
+httpx
