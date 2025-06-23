@@ -1,5 +1,10 @@
 from fastapi.testclient import TestClient
-# Import the FastAPI app from the local src package
+from pathlib import Path
+import sys
+
+# Ensure the src package is importable when tests run from any directory
+sys.path.append(str(Path(__file__).resolve().parents[1]))
+
 from src.api.main import app
 
 client = TestClient(app)
