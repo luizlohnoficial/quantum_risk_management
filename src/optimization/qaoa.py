@@ -4,6 +4,7 @@ from typing import List
 try:
     from qiskit_optimization import QuadraticProgram
     from qiskit_algorithms import QAOA
+    from qiskit_algorithms.optimizers import COBYLA
     from qiskit.primitives import Sampler
 except ImportError:
     QuadraticProgram = None
@@ -40,6 +41,10 @@ def optimize_portfolio(returns: List[float], risks: List[float], budget: int = 2
     problem.minimize(linear=objective)
 
     sampler = Sampler()
-    qaoa = QAOA(sampler=sampler, reps=1)
+    try:
+        qaoa = QAOA(optimizer=COBYLA(), sampler=sampler, reps=1)
+    except TypeError:
+        # Older versions may not require optimizer as positional argument
+        qaoa = QAOA(sampler=sampler, reps=1, optimizer=COBYLA())
     result = qaoa.solve(problem)
     return list(result.x)
