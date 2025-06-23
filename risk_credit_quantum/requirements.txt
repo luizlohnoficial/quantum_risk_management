@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+pydantic
+streamlit
+qiskit
+qiskit-machine-learning
+qiskit-optimization
+qiskit-algorithms
+pytest
