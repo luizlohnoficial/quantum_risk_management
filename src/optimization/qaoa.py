@@ -1,4 +1,10 @@
-"""Portfolio optimization using QAOA."""
+"""Portfolio optimization using QAOA.
+
+This function formulates the asset selection problem as a quadratic binary
+optimization task and solves it using the Quantum Approximate Optimization
+Algorithm (QAOA). When Qiskit is unavailable the function falls back to a
+simple greedy heuristic so the rest of the application can continue to work.
+"""
 from typing import List
 
 try:
@@ -28,10 +34,11 @@ def optimize_portfolio(returns: List[float], risks: List[float], budget: int = 2
         A binary list indicating which assets were selected.
     """
     if QuadraticProgram is None or MinimumEigenOptimizer is None or QAOA is None or Sampler is None:
-        # Fallback: greedy selection when Qiskit is unavailable
+        # Fallback: select the best expected returns if quantum tools are missing
         idx = np.argsort(returns)[-budget:]
         return [1 if i in idx else 0 for i in range(len(returns))]
 
+    # Build a binary quadratic program representing the portfolio selection
     problem = QuadraticProgram()
     for i in range(len(returns)):
         problem.binary_var(name=f"x{i}")
@@ -41,6 +48,7 @@ def optimize_portfolio(returns: List[float], risks: List[float], budget: int = 2
     objective = {f"x{i}": -returns[i] + risks[i] for i in range(len(returns))}
     problem.minimize(linear=objective)
 
+    # QAOA works with a quantum sampler to evaluate the cost function
     sampler = Sampler()
     try:
         qaoa = QAOA(optimizer=COBYLA(), sampler=sampler, reps=1)
@@ -49,6 +57,8 @@ def optimize_portfolio(returns: List[float], risks: List[float], budget: int = 2
         qaoa = QAOA(sampler=sampler, reps=1, optimizer=COBYLA())
 
     try:
+        # MinimumEigenOptimizer wraps the quantum algorithm so it can be applied
+        # to the high-level optimization problem defined above
         optimizer = MinimumEigenOptimizer(qaoa)
         result = optimizer.solve(problem)
     except Exception:
