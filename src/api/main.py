@@ -10,7 +10,7 @@ from ..simulation.monte_carlo import simulate_defaults
 app = FastAPI(title="Quantum Credit Risk API")
 
 # Instantiate a QSVM that will serve prediction requests.
-# In a production setting this model could be loaded from persistent storage.
+# In a production setting this model could be loaded from persistent storage. 
 svm_model = QuantumSVM()
 
 class PDRequest(BaseModel):
